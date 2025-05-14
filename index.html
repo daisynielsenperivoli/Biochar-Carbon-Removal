@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Futura&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offset Your Namibia Road Trip</title>
+  <style>
+    body { font-family: 'Futura', sans-serif; background: #e4e1de; color: #2c2c2c; padding: 20px; }
+    h1, h2 { font-family: 'Barlow', sans-serif; color: #00c96d; }
+    .section { margin-bottom: 30px; }
+    .summary { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .cta { margin-top: 30px; padding: 15px; background: #00c96d; color: white; text-align: center; border-radius: 5px; text-decoration: none; display: inline-block; font-family: 'Barlow', sans-serif; }
+    .project-info { margin-top: 30px; line-height: 1.6; }
+  </style>
+</head>
+<body>
+
+  <h1>Offset Your Namibia Road Trip</h1>
+
+  <div class="section summary">
+    <h2>Your Estimated Emissions</h2>
+    <p>Total CO₂ emissions: <span id="totalEmissions" style="color: #00c96d;">0</span> kg CO₂e</p>
+    <p>Offset Cost at $135 per tonne: <span id="offsetCost" style="color: #00c96d;">$0.00</span></p>
+  </div>
+
+  <div class="project-info">
+    <h2>About This Project</h2>
+    <p>The Perivoli Rangeland Institute works with Namibian farmers to restore degraded rangelands using biochar carbon removal. This initiative turns encroacher bush into biochar, permanently storing carbon and revitalising ecosystems.</p>
+    <p>95% of carbon credit sales go directly to the farmers, their workers, and the project, ensuring local impact. The remaining 5% supports the Perivoli Foundation's initiatives, including the Perivoli Schools Trust's work in early childhood education and natural farming across Southern Africa.</p>
+    <p>Learn more at <a href="https://perivolirangeland.com" target="_blank">perivolirangeland.com</a></p>
+  </div>
+
+  <a href="#" class="cta">Proceed to Offset Payment</a>
+
+  <div class="section summary" id="confirmationPage" style="display:none;">
+    <h2>Payment Confirmation</h2>
+    <p>Thank you for offsetting your Namibia road trip.</p>
+    <p>You have successfully offset <span id="confirmedEmissions" style="color: #00c96d;">0</span> kg CO₂e for a total of <span id="confirmedOffsetCost" style="color: #00c96d;">$0.00</span>.</p>
+    <p>Your support contributes to restoring Namibia's rangelands, supporting farmers, and promoting sustainable ecosystems.</p>
+    <p>A confirmation email has been sent to your address.</p>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <button id="downloadCertificate" class="cta" style="display:none; margin-top: 20px;">Download Offset Certificate (PDF)</button>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const emissionsInKg = parseFloat(localStorage.getItem('tripEmissionsKg')) || 0;
+      const emissionsInTonnes = emissionsInKg / 1000;
+      const pricePerTonne = 135;
+      const offsetCost = emissionsInTonnes * pricePerTonne;
+
+      document.getElementById('totalEmissions').textContent = emissionsInKg.toFixed(1);
+      document.getElementById('offsetCost').textContent = `$${offsetCost.toFixed(2)}`;
+
+      document.querySelector('.cta').addEventListener('click', function(event) {
+        event.preventDefault();
+        document.getElementById('confirmedEmissions').textContent = emissionsInKg.toFixed(1);
+        document.getElementById('confirmedOffsetCost').textContent = `$${offsetCost.toFixed(2)}`;
+        document.querySelector('.summary').style.display = 'none';
+        document.querySelector('.project-info').style.display = 'none';
+        document.querySelector('.cta').style.display = 'none';
+        document.getElementById('confirmationPage').style.display = 'block';
+        document.getElementById('downloadCertificate').style.display = 'inline-block';
+      });
+
+      document.getElementById('downloadCertificate').addEventListener('click', function() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(22);
+        doc.setTextColor(0, 201, 109);
+        doc.text('Certificate of Carbon Offset', 20, 30);
+        doc.setFontSize(12);
+        doc.setTextColor(44, 44, 44);
+        doc.text(`This certifies that you have offset ${emissionsInKg.toFixed(1)} kg of CO₂ emissions from your Namibia road trip.`, 20, 50);
+        doc.text(`Offset Amount: $${offsetCost.toFixed(2)}`, 20, 65);
+        doc.text('Thank you for supporting the Perivoli Rangeland Institute in restoring Namibia's ecosystems.', 20, 85);
+        doc.setFontSize(10);
+        doc.setTextColor(150, 150, 150);
+        doc.text('Perivoli Rangeland Institute | www.perivolirangeland.com', 20, 200);
+        doc.save('Offset-Certificate.pdf');
+      });
+    });
+  </script>
+</body>
+</html>
